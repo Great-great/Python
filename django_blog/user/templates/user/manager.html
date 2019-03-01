@@ -1,0 +1,149 @@
+{% extends 'user/users-list.html' %}
+
+{% block content %}
+    <div class="main-content">
+        <div class="breadcrumbs" id="breadcrumbs">
+            <script type="text/javascript">
+                try {
+                    ace.settings.check('breadcrumbs', 'fixed')
+                } catch (e) {
+                }
+            </script>
+
+            <ul class="breadcrumb">
+                <li>
+                    <i class="icon-fm fa fa-home home-icon"></i>
+                    <a href="#">首页</a>
+                </li>
+                <li>用户管理</li>
+                <li class="active">管理员列表</li>
+            </ul><!-- .breadcrumb -->
+
+        </div>
+
+        <div class="page-content">
+            <div class="page-header">
+                <h1>
+                    管理员列表
+                </h1>
+            </div><!-- /.page-header -->
+
+            <div class="row">
+                <div class="col-xs-12">
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="search-box-zhouju">
+                                <form action="#" class="form-inline">
+                                    <div class="form-group">
+                                        <select name="time-name" class="form-control">
+                                            <option value="reg-time">注册时间</option>
+                                            <option value="login-time">登录时间</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="date" class="form-control" name="start-time"
+                                               placeholder="起始时间">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="date" class="form-control" name="end-time" placeholder="结束时间">
+                                    </div>
+                                    &nbsp;
+                                    <div class="form-group">
+                                        <select name="keyword-name" class="form-control">
+                                            <option value="username">用户名</option>
+                                            <option value="userphone">手机号</option>
+                                            <option value="useremail">邮箱</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="keyword" placeholder="关键字">
+                                    </div>
+                                    &nbsp;
+                                    <div class="form-group">
+                                        <button class="btn btn-info form-control">搜索</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12" style="padding-top:10px;padding-bottom:10px">
+                            <p class="list-result pull-left">
+                                共
+                                {% for user in manager.all %}
+                                    {% if forloop.last %}
+                                        <span class="text-success">{{ forloop.counter }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                                条结果
+                            </p>
+
+                            <button class="btn btn-info pull-right" data-toggle="modal" data-target="#addManagerModal"
+                                    href="{% url 'user:AddManager' %}">
+                                <i class="icon-plus"></i>添加管理员
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                    <tr class="info">
+                                        <th>管理员名</th>
+                                        <th>
+                                            <i class="icon-time bigger-110"></i>
+                                            注册时间
+                                        </th>
+                                        <th>
+                                            <i class="icon-time bigger-110"></i>
+                                            注册IP
+                                        </th>
+                                        <th>
+                                            <i class="icon-time bigger-110"></i>
+                                            是否可用
+                                        </th>
+                                        <th>
+                                            <i class="icon-cog bigger-110"></i>
+                                            操作
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for user in manager.all %}
+                                        <tr>
+                                            <td>{{ user.admin_name|default:" " }}</td>
+                                            <td>{{ user.reg_time|default:" " }}</td>
+                                            <td>{{ user.reg_ip|default:" " }}</td>
+                                            <td>{{ user.is_status|default:" " }}</td>
+                                            <td class="at">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-xs btn-success" data-toggle="modal"
+                                                            data-target="#editManagerModal"
+                                                            onclick="editManager({{ user.id }},this) ">
+                                                        <i class="icon-edit bigger-120"></i>
+                                                        编辑
+                                                    </button>
+                                                    <button onclick="repwdManager({{ user.id }},this)"
+                                                            class="btn btn-xs btn-primary" data-toggle="modal"
+                                                            data-target="#repwdManagerModal">
+                                                        <i class="icon-pencil bigger-120"></i>
+                                                        修改密码
+                                                    </button>
+                                                    <button onclick="delManager({{ user.id }},this)"
+                                                            class="btn btn-xs btn-danger">
+                                                        <i class="icon-trash bigger-120"></i>
+                                                        删除
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div><!-- /.table-responsive -->
+                        </div><!-- /span -->
+                    </div><!-- /row -->
+{% endblock %}

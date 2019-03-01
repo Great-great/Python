@@ -1,0 +1,74 @@
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">用户详情</h4>
+        </div>
+        <div class="modal-body">
+            <table class="table table-bordered table-hover table-striped table-responsive">
+                <tbody>
+                <tr>
+                    <td width="25%">邮箱</td>
+                    <td width="75%">{{ user.email }}</td>
+                </tr>
+                <tr>
+                    <td>手机号</td>
+                    <td>{{ user.phone }}</td>
+                </tr>
+                <tr>
+                    <td>昵称</td>
+                    <td>{{ user.nickname }}</td>
+                </tr>
+                <tr>
+                    <td>注册时间/IP</td>
+                    <td>
+                        {{ user.reg_time|date:'Y-m-d'}}/{{ user.reg_ip }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>最后登录时间/IP</td>
+                    <td>
+                        {{ user.last_time|date:'Y-m-d'}}/{{ user.last_ip }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>身份证号</td>
+                    <td>{{ user.id_card }}</td>
+                </tr>
+                <tr>
+                    <td>地址</td>
+                    <td>{{ user.province.province }} {{ user.city.city }} {{ user.country.area }} {{ user.address }}</td>
+                </tr>
+                <tr>
+                    <td>毕业院校</td>
+                    <td>{{ user.school }}</td>
+                </tr>
+                <tr>
+                    <td>专业</td>
+                    <td>{{ user.major }}</td>
+                </tr>
+                <tr>
+                    <td>学历</td>
+                    {% for edu in user.EDU_LIST %}
+                        {% if user.education in edu %}
+                            <td>{{ edu.1 }}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>学位</td>
+                    {% for Dgree in user.DGREE_LIST %}
+                        {% if user.dgree in Dgree %}
+                            <td>{{ Dgree.1 }}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+        </div>
+    </div>
+</div>

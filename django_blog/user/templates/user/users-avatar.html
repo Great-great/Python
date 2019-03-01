@@ -1,0 +1,65 @@
+<div class="modal-dialog modal-lg" role="document" style="width: 900px">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">修改用户头像</h4>
+        </div>
+        <div class="modal-body">
+            {% load static %}
+            <div class="row">
+                <div class="col-sm-10">
+                    <label>
+                        {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" id="avatar-img" alt="" width="300px"
+                                 height="300px">
+                        {% else %}
+                            <img src="{% static 'image/default.png' %}" id="avatar-img" alt="" width="300px"
+                                 height="300px">
+                        {% endif %}
+
+                        <div>
+                            头像
+                            <input type="file" id="avatar-input" style="display: none">
+                        </div>
+                    </label>
+                    <span id="user_id" data-id="{{ user.id }}"></span>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-link" data-dismiss="modal">取消</button>
+                        <button type="submit" id="submit" class="btn btn-primary" data-dismiss="modal">提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#avatar-input").on('change', () => {
+        var choose_file = $("#avatar-input")[0].files[0];
+        var reader = new FileReader();
+        reader.readAsDataURL(choose_file);//读取用户上传的图片路径
+        reader.onload = function () {
+            $("#avatar-img").attr('src', reader.result)
+        }
+    });
+    $("#submit").click(() => {
+        formdata = new FormData();
+        formdata.append('user_id', $("#user_id").data('id'));
+        formdata.append('avatar', $("#avatar-input")[0].files[0]);
+        formdata.append("csrfmiddlewaretoken", $("[name='csrfmiddlewaretoken']").val());
+
+        $.ajax({
+            processData: false,
+            contentType: false,
+            url: '/user/avatar_user/',
+            type: 'post',
+            data: formdata,
+            success: (data) => {
+                console.log(data['state']);
+                if(data['state']===1){
+                    window.location.href='/user/'
+                }
+            }
+        })
+    })
+</script>

@@ -1,0 +1,154 @@
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">修改管理员密码</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal" id="editForm">
+                <div class="form-group">
+                    <label for="inputEmailEdit" class="col-sm-3 control-label">管理员：</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control"
+                               value='{{ manager.admin_name }}' readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmailEdit" class="col-sm-3 control-label">新密码：</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="ManagerPwdEdit"
+                               placeholder="请输入新密码">
+                        <span class="alt pwd"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmailEdit" class="col-sm-3 control-label">确认密码：</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="ManagerRepwdEdit"
+                               placeholder="请确认密码">
+                        <span class="alt repwd"></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-link" data-dismiss="modal">取消</button>
+            <button type="submit" id="submit" onclick="submitPwdManager({{ manager.id }},this)" class="btn btn-primary">
+                提交
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitPwdManager(id, obj) {
+        var repassword = $('#ManagerRepwdEdit').val();
+        var password = $('#ManagerPwdEdit').val();
+        if (checkPwdSame(password, repassword, false) && checkPassword(password, false))
+            $.ajax({
+                url: '/user/repwd_manager/',
+                type: 'post',
+                data: {
+                    'manager_id': id,
+                    'manager_pwd': repassword,
+                },
+                success: (data) => {
+                    console.log(data);
+                    if (data['status'] === 'success') {
+                        window.location.href = '/user/managers/';
+                    }
+                }
+            })
+    }
+
+    //给password绑定事件
+    $('#ManagerPwdEdit').keyup(() => {
+        var password = $("#ManagerPwdEdit").val();
+        checkPassword(password, true);
+    });
+    //给repassword绑定事件
+    $('#ManagerRepwdEdit').keyup(() => {
+        var password = $("#ManagerPwdEdit").val();
+        var repassword = $('#ManagerRepwdEdit').val();
+        checkPwdSame(password, repassword, true);
+    });
+
+    //检查密码
+    function checkPassword(password, status, info) {
+        var pwd = "";
+        var re = /^[a-zA-Z].{5,17}$/;
+
+        if (password) {
+            pwd = password;
+        } else {
+            pwd = $('#inputPasswordAdd').val();
+        }
+
+        if (status === true) {
+            if (!re.test(pwd)) {
+                if (info) {
+                    $('.' + info).html('请输入6-18位密码，以英文字母开头...').css({
+                        'color': 'red',
+                        'font-weight': 'bold'
+                    });
+                } else {
+                    $('.pwd').html('请输入6-18位密码，以英文字母开头...').css({
+                        'color': 'red',
+                        'font-weight': 'bold'
+                    });
+                }
+            } else {
+                if (info) {
+                    $('.' + info).html('密码输入正确').css({
+                        'color': 'green',
+                        'font-weight': 'bold'
+                    });
+                } else {
+                    $('.pwd').html('密码输入正确').css({
+                        'color': 'green',
+                        'font-weight': 'bold'
+                    });
+                }
+            }
+        } else {
+            return re.test(password);
+        }
+    }
+
+    //检查第二次密码
+    function checkPwdSame(pwd, repwd, status) {
+        info = checkPassword(repwd, false);
+        if (status === true) {
+            if (!info) {
+                $('.repwd').html('请输入6-18位密码，开头请使用英文字母!').css({
+                    'color': 'red',
+                    'font-weight': 'bold'
+                });
+                return false;
+            }
+            else if (pwd === repwd) {
+                $('.repwd').html('输入正确').css({
+                    'color': 'green',
+                });
+                return true;
+            } else {
+                $('.repwd').html('两次密码输入不一致!').css({
+                    'color': 'red',
+                    'font-weight': 'bold'
+                });
+                return false;
+            }
+        } else {
+            if (!info) {
+                return false;
+            }
+            if (pwd === repwd) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+    }
+
+</script>

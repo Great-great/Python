@@ -1,0 +1,219 @@
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">编辑用户信息</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal" id="editForm">
+                <div class="form-group">
+                    <label for="inputEmailEdit" class="col-sm-2 control-label">邮箱</label>
+                    <div class="col-sm-10">
+                        <input type="email" class="form-control" id="inputEmailEdit"
+                               value='{{ users.email|default:"xx@xx.com" }}'>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputNumEdit" class="col-sm-2 control-label">手机号码</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputNumEdit"
+                               value='{{ users.phone|default:"-----------" }}'>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputNameEdit" class="col-sm-2 control-label">昵称</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputNameEdit" value="{{ users.nickname }}"
+                               disabled>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">是否报过名：</label>
+                    <div class="col-sm-10">
+                        {% if users.is_student %}
+                            <input type="radio" name="is_student" value="True" checked>是
+                            <input type="radio" name="is_student" value="False"> 否
+                            {% else %}
+                            <input type="radio" name="is_student" value="True">是
+                            <input type="radio" name="is_student" value="False" checked> 否
+                        {% endif %}
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">学历：</label>
+                    <div class="col-sm-10">
+                        {% for edu in users.EDU_LIST %}
+                            {% if users.education in edu %}
+                                <input type="radio" name="education" value="{{ edu.0 }}" checked>{{ edu.1 }}
+                                {% else %}
+                                <input type="radio" name="education" value="{{ edu.0 }}">{{ edu.1 }}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">学位：</label>
+                    <div class="col-sm-10">
+                        {% for dgree in users.DGREE_LIST %}
+                            {% if users.dgree in dgree %}
+                                <input type="radio" name="dgree" value="{{ dgree.0 }}" checked>{{ dgree.1 }}
+                                {% else %}
+                                <input type="radio" name="dgree" value="{{ dgree.0 }}">{{ dgree.1 }}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">地区：</label>
+                    <div class="col-sm-10 address-select">
+                        <div class="row">
+                            <label class="col-sm-3">选择省：</label>
+                            <select name="province" id="province" onchange="have_city(this)">
+                                <option value="">请选择省份</option>
+                                {% for province in provinces %}
+                                    {% if users.province.provinceid == province.provinceid %}
+                                     <option value="{{ province.provinceid }}" selected>{{ province }}</option>
+                                    {% endif %}
+                                    <option value="{{ province.provinceid }}">{{ province }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-3">选择市：</label>
+                            <select name="city" id="city" onchange="have_country(this)">
+                                <option value="">请选择市</option>
+                                {% if users.city %}
+                                    <option value="{{ users.city.cityid }}" selected>{{ users.city.city }}</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-3">选择县：</label>
+                            <select name="country" id="country">
+                                <option value="">请选择区县</option>
+                                {% if users.country %}
+                                    <option value="{{ users.country.areaid}}" selected>{{ users.country.area }}</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputSchoolEdit" class="col-sm-2 control-label">毕业院校</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputSchoolEdit" value="{{ users.school }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="inputMajorEdit" class="col-sm-2 control-label">所学专业</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputMajorEdit" value="{{ users.major }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">状态：</label>
+                    <div class="col-sm-10">
+                        <input type="radio" name="is_status" value="True" checked> 可用
+                        <input type="radio" name="is_status" value="False"> 不可用
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-link" data-dismiss="modal">取消</button>
+            <button type="submit" id="submit" onclick="tiJiao({{ users.id }},this)" class="btn btn-primary">提交</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var get_val = () => {
+        // 获取具体的值
+        var email = $('#inputEmailEdit').val();// 邮箱
+        var phone = $('#inputNumEdit').val();//手机号
+        var is_student = $('input[name="is_student"]:checked').val(); // 是否报过名
+        var education = $('input[name="education"]:checked').val(); // 学历
+        var dgree = $('input[name="dgree"]:checked').val(); // 学位
+        var province = $('#province option:selected').val(); // 省份
+        var city = $('#city option:selected').val(); // 城市
+        var country = $('#country option:selected').val(); // 区县
+        var major = $('#inputMajorEdit').val(); // 专业
+        var school = $("#inputSchoolEdit").val(); // 学校
+        var is_status = $('input[name="is_status"]:checked').val(); // 状态
+        var user_data = {
+            'email': email,
+            'phone': phone,
+            'is_student': is_student,
+            'education': education,
+            'dgree': dgree,
+            'province': province,
+            'city': city,
+            'country': country,
+            'major': major,
+            'school': school,
+            'is_status': is_status,
+        };
+        user_data = JSON.stringify(user_data);
+        return user_data;
+    };
+
+    function tiJiao(id, obj) {
+        var user_id = id;
+        var data = get_val();
+        $.ajax({
+            url:'/user/edit_user/',
+            type:'post',
+            data:{
+                'data':data,
+                'user_id':user_id
+            },
+            success:(data)=>{
+                console.log(data);
+                if(data['status']==='success'){
+                        window.location.href='/user/';
+                    }
+            }
+        })
+    }
+
+    function have_city(obj) {
+        proid = $(obj).val();
+        $.ajax({
+            url: '/user/get_city/',
+            type: 'get',
+            data: {'proid': proid},
+            success: (info) => {
+                var city = $('#city');
+                var country = $('#country');
+                country.empty().append('<option value="">请选择区县</option>');
+                city.empty().append('<option value="">请选择市</option>');
+                console.log(info);
+                $.each(info['data'], function (index, item) {
+                    city.append('<option value=' + item[0] + '>' + item[1] + '</option>');
+                })
+            }
+        })
+    }
+
+    function have_country(obj) {
+        var cityid = $(obj).val();
+        $.ajax({
+            url: '/user/get_country/',
+            type: 'get',
+            data: {
+                'cityid': cityid
+            },
+            success: (info) => {
+                var country = $('#country');
+                country.empty().append('<option value="">请选择区县</option>');
+                $.each(info.data, function (index, item) {
+                    country.append('<option value=' + item[0] + '>' + item[1] + '</option>');
+                })
+            }
+        })
+    }
+</script>

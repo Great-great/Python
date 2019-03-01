@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/ace.min.css">
+    <link rel="stylesheet" href="/static/css/ace-rtl.min.css">
+    <title>舟炬教育学历中心后台管理登录</title>
+
+</head>
+
+<body class="login-layout">
+<div class="main-container">
+    <div class="main-content">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1">
+                <div class="login-container">
+                    <div class="center">
+                        <h1>
+                            <i class="icon-dashboard blue"></i>
+                            <span class="red">学历中心</span>
+                            <span class="white">后台管理系统</span>
+                        </h1>
+                        <h4 class="blue">&copy; 舟炬教育</h4>
+                    </div>
+
+                    <div class="space-6"></div>
+
+                    <div class="position-relative">
+                        <div id="login-box" class="login-box visible widget-box no-border">
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    <h4 class="header blue lighter bigger">
+                                        <i class="icon-coffee blue"></i>
+                                        请输入用户名密码
+                                    </h4>
+
+                                    <div class="space-6"></div>
+
+                                    <form>
+                                        <fieldset>
+                                            <label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="text" id="admin_name" class="form-control"
+                                                                   placeholder="用户名"/>
+															<i class="icon-user"></i>
+														</span>
+                                            </label>
+
+                                            <label class="block clearfix">
+														<span class="block input-icon input-icon-right">
+															<input type="password" id="pwd" class="form-control"
+                                                                   placeholder="密码"/>
+															<i class="icon-lock"></i>
+														</span>
+                                            </label>
+
+                                            <div class="space"></div>
+
+                                            <div class="clearfix">
+                                                <label class="inline">
+                                                    <input type="checkbox" class="ace"/>
+                                                    <span class="lbl"> 记住我</span>
+                                                </label>
+                                                <p id="error"></p>
+                                                <button type="button" id="btn"
+                                                        class="width-35 pull-right btn btn-sm btn-primary">
+                                                    <i class="icon-key"></i>
+                                                    登录
+                                                </button>
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                        </fieldset>
+                                    </form>
+                                </div><!-- /widget-main -->
+                            </div><!-- /widget-body -->
+                        </div><!-- /login-box -->
+                    </div><!-- /position-relative -->
+                </div>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div>
+</div><!-- /.main-container -->
+
+<!-- basic scripts -->
+</body>
+<script>
+    $(() => {
+        $('#btn').bind('click', function () {
+            //先获取数据
+            var admin_name = $('#admin_name').val();
+            var pwd = $('#pwd').val();
+            var $this = $(this);
+
+            //数据传递
+            $.ajax({
+                url: '/cms/login/',
+                type: 'post',
+                data: {
+                    'admin_name': admin_name,
+                    'pwd': pwd,
+                },
+                success: function (data) {
+                    if (data['status'] === 'success') {
+                        window.location.href = data['info'];
+                    }
+                    else {
+                        $('#error').html(data['message']).css('color', 'red')
+                    }
+                }
+            })
+        })
+
+    })
+</script>
+</html>

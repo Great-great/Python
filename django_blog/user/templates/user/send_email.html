@@ -1,0 +1,44 @@
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">发邮件重置密码</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal" id="addForm">
+                <div class="form-group">
+                    <label for="inputEmailAdd" class="col-sm-2 control-label">当前邮箱：</label>
+                    <div class="col-sm-10">
+                        <input type="email" value="{{ users.email }}" class="form-control" id="inputEmailAdd" disabled>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputNameAdd" class="col-sm-2 control-label">用户名：</label>
+                    <div class="col-sm-10">
+                        <input type="text" value="{{ users.nickname }}" class="form-control" id="inputNameAdd" disabled>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-link" data-dismiss="modal">取消</button>
+            <button type="submit" id="submit" data-id="{{ users.id }}" class="btn btn-primary" data-dismiss="modal">提交
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+    $('#submit').click(() => {
+        let user_id = $('#submit').data('id');
+        $.ajax({
+            url: '/user/send_email/',
+            type: 'post',
+            data: {
+                'user_id': user_id
+            },
+            success: (data) => {
+                console.log(data);
+            }
+        })
+    });
+</script>
